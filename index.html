@@ -112,6 +112,11 @@
             font-size: 1.1rem;
             margin-left: auto;
         }
+        .option-item .wrong-icon {
+            display: none;
+            font-size: 1.1rem;
+            margin-left: auto;
+        }
         .option-item.selected {
             border-color: #4fa3cc;
             background: rgba(0, 80, 130, 0.3);
@@ -135,6 +140,10 @@
             background: #2a7a5a;
             color: white;
         }
+        .option-item.correct .check-icon {
+            display: block;
+            color: #4aca7a;
+        }
         .option-item.wrong {
             border-color: #cc5555;
             background: rgba(200, 50, 50, 0.12);
@@ -143,6 +152,10 @@
             border-color: #cc5555;
             background: #9e3a3a;
             color: white;
+        }
+        .option-item.wrong .wrong-icon {
+            display: block;
+            color: #cc5555;
         }
         .option-item.disabled {
             pointer-events: none;
@@ -748,26 +761,31 @@
                     <span class="indicator">A</span>
                     <span class="text-option">Angka pada timbangan akan tetap hanya jika lift bergerak dengan kecepatan tetap</span>
                     <span class="check-icon">✅</span>
+                    <span class="wrong-icon">❌</span>
                 </div>
                 <div class="option-item" data-answer="B">
                     <span class="indicator">B</span>
                     <span class="text-option">Angka pada timbangan akan naik jika lift bergerak dipercepat ke atas</span>
                     <span class="check-icon">✅</span>
+                    <span class="wrong-icon">❌</span>
                 </div>
                 <div class="option-item" data-answer="C">
                     <span class="indicator">C</span>
                     <span class="text-option">Angka pada timbangan akan turun jika lift bergerak dipercepat ke bawah</span>
                     <span class="check-icon">✅</span>
+                    <span class="wrong-icon">❌</span>
                 </div>
                 <div class="option-item" data-answer="D">
                     <span class="indicator">D</span>
                     <span class="text-option">Angka pada timbangan dapat bernilai nol hanya jika tali lift putus sehingga lift bergerak turun.</span>
                     <span class="check-icon">✅</span>
+                    <span class="wrong-icon">❌</span>
                 </div>
                 <div class="option-item" data-answer="E">
                     <span class="indicator">E</span>
                     <span class="text-option">Timbangan berfungsi untuk memastikan lift tidak kelebihan muatan saat dioperasikan</span>
                     <span class="check-icon">✅</span>
+                    <span class="wrong-icon">❌</span>
                 </div>
             </div>
 
@@ -880,7 +898,7 @@
             });
 
         // ================================================================
-        // 2. OPSI JAWABAN - OPTION D = SALAH (MERAH)
+        // 2. OPSI JAWABAN - OPSI D = SALAH (MERAH)
         // ================================================================
         const optionItems = document.querySelectorAll('.option-item');
         const checkBtn = document.getElementById('checkBtn');
@@ -892,14 +910,25 @@
 
         optionItems.forEach(item => {
             item.addEventListener('click', function() {
-                optionItems.forEach(opt => opt.classList.remove('selected'));
+                // Hapus semua status sebelumnya
+                optionItems.forEach(opt => {
+                    opt.classList.remove('selected', 'correct', 'wrong', 'disabled');
+                    // Sembunyikan semua icon
+                    const checkIcon = opt.querySelector('.check-icon');
+                    const wrongIcon = opt.querySelector('.wrong-icon');
+                    if (checkIcon) checkIcon.style.display = 'none';
+                    if (wrongIcon) wrongIcon.style.display = 'none';
+                });
+                
                 this.classList.add('selected');
                 selectedAnswer = this.dataset.answer;
+                
+                // Tampilkan icon centang untuk yang dipilih
+                const checkIcon = this.querySelector('.check-icon');
+                if (checkIcon) checkIcon.style.display = 'block';
+                
                 feedback.classList.remove('show', 'benar', 'salah');
                 feedback.textContent = '';
-                optionItems.forEach(opt => {
-                    opt.classList.remove('correct', 'wrong', 'show-correct', 'disabled');
-                });
                 checkBtn.disabled = false;
             });
         });
@@ -912,34 +941,49 @@
             }
 
             const correctAnswers = correctAnswer.split(','); // ['A','B','C','E']
-            const isCorrect = correctAnswers.includes(selectedAnswer); // D akan FALSE
+            const isCorrect = correctAnswers.includes(selectedAnswer);
+            const isD = selectedAnswer === 'D';
 
-            // DEBUG
-            console.log('Jawaban dipilih:', selectedAnswer);
-            console.log('Kunci jawaban:', correctAnswers);
-            console.log('Apakah benar?', isCorrect);
-
+            // Nonaktifkan semua opsi
             optionItems.forEach(opt => {
                 opt.classList.add('disabled');
-                // HANYA jawaban yang benar (A,B,C,E) yang diberi warna hijau
+            });
+
+            // Tandai jawaban yang benar (A,B,C,E) dengan hijau + centang
+            optionItems.forEach(opt => {
+                const checkIcon = opt.querySelector('.check-icon');
+                const wrongIcon = opt.querySelector('.wrong-icon');
+                
                 if (correctAnswers.includes(opt.dataset.answer)) {
-                    opt.classList.add('show-correct');
-                }
-                // Tandai jawaban yang dipilih
-                if (opt.dataset.answer === selectedAnswer) {
-                    if (isCorrect) {
-                        opt.classList.add('correct'); // HIJAU
-                    } else {
-                        opt.classList.add('wrong'); // MERAH
-                    }
+                    opt.classList.add('correct');
+                    if (checkIcon) checkIcon.style.display = 'block';
+                    if (wrongIcon) wrongIcon.style.display = 'none';
                 }
             });
 
-            if (isCorrect) {
-                feedback.textContent = '✅ ' + explanationText;
+            // Tandai opsi D dengan merah + silang (SALAH)
+            optionItems.forEach(opt => {
+                const checkIcon = opt.querySelector('.check-icon');
+                const wrongIcon = opt.querySelector('.wrong-icon');
+                
+                if (opt.dataset.answer === 'D') {
+                    opt.classList.add('wrong');
+                    if (checkIcon) checkIcon.style.display = 'none';
+                    if (wrongIcon) wrongIcon.style.display = 'block';
+                }
+            });
+
+            // Jika user pilih D, tampilkan pesan khusus
+            if (isD) {
+                feedback.innerHTML = '❌ <b>Opsi D SALAH!</b><br>' + 
+                    'Angka nol (0 kg) terjadi saat <b>jatuh bebas (a = g)</b>, bukan hanya karena tali putus. ' +
+                    'Jika lift bergerak turun dengan percepatan &lt; g, angka timbangan masih &gt; 0.';
+                feedback.className = 'feedback show salah';
+            } else if (isCorrect) {
+                feedback.innerHTML = '✅ ' + explanationText;
                 feedback.className = 'feedback show benar';
             } else {
-                feedback.textContent = '❌ Jawaban Anda kurang tepat. Opsi D adalah SALAH!';
+                feedback.textContent = '❌ Jawaban Anda kurang tepat. Coba periksa kembali konsep gaya normal!';
                 feedback.className = 'feedback show salah';
             }
 
@@ -1134,7 +1178,7 @@
 
         console.log('🚀 Simulasi Lift siap!');
         console.log('🔑 Kunci jawaban (BENAR):', correctAnswer);
-        console.log('❌ Opsi D adalah SALAH (akan muncul MERAH)!');
+        console.log('❌ Opsi D adalah SALAH (akan muncul MERAH dengan silang)!');
     </script>
 
 </body>
