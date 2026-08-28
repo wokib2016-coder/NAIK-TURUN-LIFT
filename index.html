@@ -37,6 +37,10 @@
             margin-bottom: 12px;
             font-weight: 600;
         }
+        /* ===== GAMBAR SOAL ===== */
+        .soal-wrapper {
+            margin-bottom: 16px;
+        }
         .soal-image {
             width: 100%;
             border-radius: 16px;
@@ -49,16 +53,21 @@
         }
         .no-image {
             text-align: center;
-            padding: 30px 20px;
+            padding: 40px 20px;
             color: #4a7a92;
             font-size: 0.85rem;
             border: 2px dashed rgba(80, 160, 220, 0.2);
             border-radius: 16px;
+            background: rgba(0, 40, 70, 0.15);
         }
         .no-image .icon {
-            font-size: 2.5rem;
-            margin-bottom: 8px;
+            font-size: 3rem;
+            margin-bottom: 10px;
             opacity: 0.5;
+        }
+        .no-image .bold {
+            font-weight: 600;
+            color: #6a9ab8;
         }
         .options-grid {
             display: grid;
@@ -725,13 +734,12 @@
         <!-- ============================================================ -->
         <!-- 1. GAMBAR SOAL (otomatis dari soal.jpg) - TANPA UPLOAD -->
         <!-- ============================================================ -->
-        <div class="card">
-            <div class="card-title">📄 Soal</div>
+        <div class="soal-wrapper">
             <img id="soalImage" class="soal-image" src="" alt="Soal" />
-            <div id="noImage" class="no-image">
+            <div id="noImage" class="no-image" style="display:none;">
                 <div class="icon">🖼️</div>
-                <div>Belum ada gambar soal</div>
-                <div style="font-size:0.65rem; margin-top:4px; opacity:0.6;">Simpan file dengan nama <b>soal.jpg</b> di folder yang sama</div>
+                <div>Gambar soal tidak ditemukan</div>
+                <div style="font-size:0.65rem; margin-top:6px; opacity:0.6;">Simpan file dengan nama <span class="bold">soal.jpg</span> di folder yang sama</div>
             </div>
         </div>
 
