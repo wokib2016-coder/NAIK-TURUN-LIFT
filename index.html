@@ -914,7 +914,7 @@
     <!-- ============================================================ -->
     <script>
         // ================================================================
-        // 1. UPLOAD SOAL
+        // 1. UPLOAD SOAL + OTOMATIS BACA soal.jpg
         // ================================================================
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
@@ -937,6 +937,26 @@
             }
         }
 
+        // ================================================================
+        // OTOMATIS BACA FILE soal.jpg (TANPA UPLOAD)
+        // ================================================================
+        fetch('soal.jpg')
+            .then(res => {
+                if (!res.ok) throw new Error('File tidak ditemukan');
+                return res.blob();
+            })
+            .then(blob => {
+                const file = new File([blob], 'soal.jpg', { type: 'image/jpeg' });
+                handleFile(file);
+                console.log('✅ soal.jpg berhasil dimuat otomatis!');
+            })
+            .catch(() => {
+                console.log('📄 soal.jpg tidak ditemukan. Silakan upload manual.');
+            });
+
+        // ================================================================
+        // UPLOAD MANUAL (CADANGAN)
+        // ================================================================
         fileInput.addEventListener('change', function(e) {
             if (this.files.length > 0) {
                 handleFile(this.files[0]);
