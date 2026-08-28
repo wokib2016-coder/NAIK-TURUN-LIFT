@@ -37,7 +37,6 @@
             margin-bottom: 12px;
             font-weight: 600;
         }
-        /* ===== GAMBAR SOAL ===== */
         .soal-wrapper {
             margin-bottom: 16px;
         }
@@ -731,9 +730,7 @@
 
     <div class="main-container">
 
-        <!-- ============================================================ -->
-        <!-- 1. GAMBAR SOAL (otomatis dari soal.jpg) - TANPA UPLOAD -->
-        <!-- ============================================================ -->
+        <!-- GAMBAR SOAL -->
         <div class="soal-wrapper">
             <img id="soalImage" class="soal-image" src="" alt="Soal" />
             <div id="noImage" class="no-image" style="display:none;">
@@ -743,9 +740,7 @@
             </div>
         </div>
 
-        <!-- ============================================================ -->
-        <!-- 2. OPSI JAWABAN INTERAKTIF -->
-        <!-- ============================================================ -->
+        <!-- OPSI JAWABAN -->
         <div class="card">
             <div class="card-title">✅ Pilih Jawaban yang BENAR</div>
             <div class="options-grid" id="optionsGrid">
@@ -779,6 +774,7 @@
             <button class="btn-check" id="checkBtn">🔍 Cek Jawaban</button>
             <div class="feedback" id="feedback"></div>
 
+            <!-- ✅ KUNCI JAWABAN: D TIDAK TERMASUK! -->
             <div style="display:none;" id="correctAnswer">A,B,C,E</div>
             <div style="display:none;" id="explanationText">
                 ✅ Jawaban BENAR: A, B, C, dan E<br><br>
@@ -790,9 +786,7 @@
             </div>
         </div>
 
-        <!-- ============================================================ -->
-        <!-- 3. SIMULASI INTERAKTIF -->
-        <!-- ============================================================ -->
+        <!-- SIMULASI -->
         <div class="simulasi-container">
             <div class="simulasi-title">⚙️ LIFT FISIKA</div>
             <div class="simulasi-sub">Simulasi Gaya &amp; Percepatan</div>
@@ -860,12 +854,9 @@
         </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!-- JAVASCRIPT -->
-    <!-- ============================================================ -->
     <script>
         // ================================================================
-        // 1. MUAT GAMBAR SOAL OTOMATIS DARI soal.jpg
+        // 1. MUAT GAMBAR SOAL
         // ================================================================
         const soalImage = document.getElementById('soalImage');
         const noImage = document.getElementById('noImage');
@@ -889,12 +880,12 @@
             });
 
         // ================================================================
-        // 2. OPSI JAWABAN INTERAKTIF
+        // 2. OPSI JAWABAN - OPTION D = SALAH
         // ================================================================
         const optionItems = document.querySelectorAll('.option-item');
         const checkBtn = document.getElementById('checkBtn');
         const feedback = document.getElementById('feedback');
-        const correctAnswer = document.getElementById('correctAnswer').textContent;
+        const correctAnswer = document.getElementById('correctAnswer').textContent; // "A,B,C,E"
         const explanationText = document.getElementById('explanationText').textContent;
 
         let selectedAnswer = null;
@@ -920,8 +911,8 @@
                 return;
             }
 
-            const correctAnswers = correctAnswer.split(',');
-            const isCorrect = correctAnswers.includes(selectedAnswer);
+            const correctAnswers = correctAnswer.split(','); // ['A','B','C','E']
+            const isCorrect = correctAnswers.includes(selectedAnswer); // D akan FALSE
 
             optionItems.forEach(opt => {
                 opt.classList.add('disabled');
@@ -949,7 +940,7 @@
         });
 
         // ================================================================
-        // 3. SIMULASI INTERAKTIF
+        // 3. SIMULASI
         // ================================================================
         const liftCar = document.getElementById('liftCar');
         const scaleDisplay = document.getElementById('scaleDisplay');
@@ -1135,6 +1126,7 @@
         startAnimation();
 
         console.log('🚀 Simulasi Lift siap!');
+        console.log('🔑 Kunci jawaban: A, B, C, E (D = SALAH)');
     </script>
 
 </body>
