@@ -914,6 +914,11 @@
             const correctAnswers = correctAnswer.split(','); // ['A','B','C','E']
             const isCorrect = correctAnswers.includes(selectedAnswer); // D akan FALSE
 
+            // DEBUG - LIHAT DI KONSOLE
+            console.log('Jawaban dipilih:', selectedAnswer);
+            console.log('Kunci jawaban:', correctAnswers);
+            console.log('Apakah benar?', isCorrect);
+
             optionItems.forEach(opt => {
                 opt.classList.add('disabled');
                 if (correctAnswers.includes(opt.dataset.answer)) {
@@ -932,7 +937,7 @@
                 feedback.textContent = '✅ ' + explanationText;
                 feedback.className = 'feedback show benar';
             } else {
-                feedback.textContent = '❌ Jawaban Anda kurang tepat. Coba perhatikan simulasi!';
+                feedback.textContent = '❌ Jawaban Anda kurang tepat. Opsi D adalah SALAH! Coba perhatikan simulasi.';
                 feedback.className = 'feedback show salah';
             }
 
@@ -1126,7 +1131,8 @@
         startAnimation();
 
         console.log('🚀 Simulasi Lift siap!');
-        console.log('🔑 Kunci jawaban: A, B, C, E (D = SALAH)');
+        console.log('🔑 Kunci jawaban (BENAR):', correctAnswer);
+        console.log('❌ Opsi D adalah SALAH!');
     </script>
 
 </body>
