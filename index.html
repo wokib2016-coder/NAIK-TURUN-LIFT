@@ -774,7 +774,7 @@
             <button class="btn-check" id="checkBtn">🔍 Cek Jawaban</button>
             <div class="feedback" id="feedback"></div>
 
-            <!-- ✅ KUNCI JAWABAN: HANYA A, B, C, E -->
+            <!-- KUNCI JAWABAN: HANYA A, B, C, E (D TIDAK ADA!) -->
             <div style="display:none;" id="correctAnswer">A,B,C,E</div>
             <div style="display:none;" id="explanationText">
                 ✅ Jawaban BENAR: A, B, C, dan E<br><br>
@@ -880,14 +880,12 @@
             });
 
         // ================================================================
-        // 2. OPSI JAWABAN - OPTION D = SALAH
+        // 2. OPSI JAWABAN - OPTION D = SALAH (MERAH)
         // ================================================================
         const optionItems = document.querySelectorAll('.option-item');
         const checkBtn = document.getElementById('checkBtn');
         const feedback = document.getElementById('feedback');
-
-        // ✅ KUNCI JAWABAN YANG BENAR (D TIDAK ADA!)
-        const correctAnswers = ['A', 'B', 'C', 'E'];
+        const correctAnswer = document.getElementById('correctAnswer').textContent; // "A,B,C,E"
         const explanationText = document.getElementById('explanationText').textContent;
 
         let selectedAnswer = null;
@@ -913,26 +911,26 @@
                 return;
             }
 
-            // CEK APAKAH JAWABAN ADA DI KUNCI JAWABAN
-            const isCorrect = correctAnswers.includes(selectedAnswer);
+            const correctAnswers = correctAnswer.split(','); // ['A','B','C','E']
+            const isCorrect = correctAnswers.includes(selectedAnswer); // D akan FALSE
 
-            // DEBUG - LIHAT DI KONSOLE
+            // DEBUG
             console.log('Jawaban dipilih:', selectedAnswer);
             console.log('Kunci jawaban:', correctAnswers);
             console.log('Apakah benar?', isCorrect);
 
             optionItems.forEach(opt => {
                 opt.classList.add('disabled');
-                // HANYA tandai jawaban yang benar (A, B, C, E) dengan warna hijau
+                // HANYA jawaban yang benar (A,B,C,E) yang diberi warna hijau
                 if (correctAnswers.includes(opt.dataset.answer)) {
                     opt.classList.add('show-correct');
                 }
                 // Tandai jawaban yang dipilih
                 if (opt.dataset.answer === selectedAnswer) {
                     if (isCorrect) {
-                        opt.classList.add('correct');
+                        opt.classList.add('correct'); // HIJAU
                     } else {
-                        opt.classList.add('wrong');
+                        opt.classList.add('wrong'); // MERAH
                     }
                 }
             });
@@ -941,7 +939,7 @@
                 feedback.textContent = '✅ ' + explanationText;
                 feedback.className = 'feedback show benar';
             } else {
-                feedback.textContent = '❌ Jawaban Anda kurang tepat. Opsi D adalah SALAH! Coba perhatikan simulasi.';
+                feedback.textContent = '❌ Jawaban Anda kurang tepat. Opsi D adalah SALAH!';
                 feedback.className = 'feedback show salah';
             }
 
@@ -1135,8 +1133,8 @@
         startAnimation();
 
         console.log('🚀 Simulasi Lift siap!');
-        console.log('🔑 Kunci jawaban (BENAR):', correctAnswers);
-        console.log('❌ Opsi D adalah SALAH!');
+        console.log('🔑 Kunci jawaban (BENAR):', correctAnswer);
+        console.log('❌ Opsi D adalah SALAH (akan muncul MERAH)!');
     </script>
 
 </body>
