@@ -161,6 +161,25 @@
             pointer-events: none;
             opacity: 0.8;
         }
+        .option-item.d-item {
+            border-color: #cc5555;
+            background: rgba(200, 50, 50, 0.12);
+        }
+        .option-item.d-item .indicator {
+            border-color: #cc5555;
+            background: #9e3a3a;
+            color: white;
+        }
+        .option-item.d-item .wrong-icon {
+            display: block;
+            color: #cc5555;
+        }
+        .option-item.d-item .check-icon {
+            display: none !important;
+        }
+        .option-item.d-item.selected .check-icon {
+            display: none !important;
+        }
         .btn-check {
             background: linear-gradient(145deg, #1d6d94, #0f4a68);
             border: none;
@@ -775,7 +794,7 @@
                     <span class="check-icon">✅</span>
                     <span class="wrong-icon">❌</span>
                 </div>
-                <div class="option-item" data-answer="D">
+                <div class="option-item" data-answer="D" id="optionD">
                     <span class="indicator">D</span>
                     <span class="text-option">Angka pada timbangan dapat bernilai nol hanya jika tali lift putus sehingga lift bergerak turun.</span>
                     <span class="check-icon">✅</span>
@@ -792,7 +811,6 @@
             <button class="btn-check" id="checkBtn">🔍 Cek Jawaban</button>
             <div class="feedback" id="feedback"></div>
 
-            <!-- KUNCI JAWABAN: HANYA A, B, C, E (D TIDAK ADA!) -->
             <div style="display:none;" id="correctAnswer">A,B,C,E</div>
             <div style="display:none;" id="explanationText">
                 ✅ Jawaban BENAR: A, B, C, dan E<br><br>
@@ -898,12 +916,13 @@
             });
 
         // ================================================================
-        // 2. OPSI JAWABAN - OPSI D = SALAH (MERAH)
+        // 2. OPSI JAWABAN - OPSI D LANGSUNG SILANG MERAH SAAT DIKLIK
         // ================================================================
         const optionItems = document.querySelectorAll('.option-item');
+        const optionD = document.getElementById('optionD');
         const checkBtn = document.getElementById('checkBtn');
         const feedback = document.getElementById('feedback');
-        const correctAnswer = document.getElementById('correctAnswer').textContent; // "A,B,C,E"
+        const correctAnswer = document.getElementById('correctAnswer').textContent;
         const explanationText = document.getElementById('explanationText').textContent;
 
         let selectedAnswer = null;
@@ -913,23 +932,42 @@
                 // Hapus semua status sebelumnya
                 optionItems.forEach(opt => {
                     opt.classList.remove('selected', 'correct', 'wrong', 'disabled');
-                    // Sembunyikan semua icon
+                });
+
+                // Reset semua icon
+                optionItems.forEach(opt => {
                     const checkIcon = opt.querySelector('.check-icon');
                     const wrongIcon = opt.querySelector('.wrong-icon');
                     if (checkIcon) checkIcon.style.display = 'none';
                     if (wrongIcon) wrongIcon.style.display = 'none';
                 });
-                
-                this.classList.add('selected');
-                selectedAnswer = this.dataset.answer;
-                
-                // Tampilkan icon centang untuk yang dipilih
-                const checkIcon = this.querySelector('.check-icon');
-                if (checkIcon) checkIcon.style.display = 'block';
-                
-                feedback.classList.remove('show', 'benar', 'salah');
-                feedback.textContent = '';
-                checkBtn.disabled = false;
+
+                // Jika yang diklik adalah OPSI D → langsung muncul silang merah
+                if (this.dataset.answer === 'D') {
+                    this.classList.add('d-item');
+                    selectedAnswer = 'D';
+                    
+                    // Feedback langsung muncul
+                    feedback.innerHTML = '❌ <b>Opsi D SALAH!</b><br>' + 
+                        'Angka nol (0 kg) terjadi saat <b>jatuh bebas (a = g)</b>, ' +
+                        'bukan hanya karena tali putus. Jika lift bergerak turun dengan percepatan &lt; g, ' +
+                        'angka timbangan masih &gt; 0.';
+                    feedback.className = 'feedback show salah';
+                    
+                    // Nonaktifkan tombol cek
+                    checkBtn.disabled = true;
+                } else {
+                    // Untuk opsi A, B, C, E → normal (centang biru)
+                    this.classList.add('selected');
+                    selectedAnswer = this.dataset.answer;
+                    
+                    const checkIcon = this.querySelector('.check-icon');
+                    if (checkIcon) checkIcon.style.display = 'block';
+                    
+                    feedback.classList.remove('show', 'benar', 'salah');
+                    feedback.textContent = '';
+                    checkBtn.disabled = false;
+                }
             });
         });
 
@@ -940,17 +978,16 @@
                 return;
             }
 
-            const correctAnswers = correctAnswer.split(','); // ['A','B','C','E']
-            const isCorrect = correctAnswers.includes(selectedAnswer);
-            const isD = selectedAnswer === 'D';
+            // Jika yang dipilih adalah D, tapi tombol cek ditekan (seharusnya sudah dinonaktifkan)
+            if (selectedAnswer === 'D') {
+                return;
+            }
 
-            // Nonaktifkan semua opsi
+            const correctAnswers = correctAnswer.split(',');
+            const isCorrect = correctAnswers.includes(selectedAnswer);
+
             optionItems.forEach(opt => {
                 opt.classList.add('disabled');
-            });
-
-            // Tandai jawaban yang benar (A,B,C,E) dengan hijau + centang
-            optionItems.forEach(opt => {
                 const checkIcon = opt.querySelector('.check-icon');
                 const wrongIcon = opt.querySelector('.wrong-icon');
                 
@@ -959,12 +996,6 @@
                     if (checkIcon) checkIcon.style.display = 'block';
                     if (wrongIcon) wrongIcon.style.display = 'none';
                 }
-            });
-
-            // Tandai opsi D dengan merah + silang (SALAH)
-            optionItems.forEach(opt => {
-                const checkIcon = opt.querySelector('.check-icon');
-                const wrongIcon = opt.querySelector('.wrong-icon');
                 
                 if (opt.dataset.answer === 'D') {
                     opt.classList.add('wrong');
@@ -973,13 +1004,7 @@
                 }
             });
 
-            // Jika user pilih D, tampilkan pesan khusus
-            if (isD) {
-                feedback.innerHTML = '❌ <b>Opsi D SALAH!</b><br>' + 
-                    'Angka nol (0 kg) terjadi saat <b>jatuh bebas (a = g)</b>, bukan hanya karena tali putus. ' +
-                    'Jika lift bergerak turun dengan percepatan &lt; g, angka timbangan masih &gt; 0.';
-                feedback.className = 'feedback show salah';
-            } else if (isCorrect) {
+            if (isCorrect) {
                 feedback.innerHTML = '✅ ' + explanationText;
                 feedback.className = 'feedback show benar';
             } else {
@@ -1178,7 +1203,7 @@
 
         console.log('🚀 Simulasi Lift siap!');
         console.log('🔑 Kunci jawaban (BENAR):', correctAnswer);
-        console.log('❌ Opsi D adalah SALAH (akan muncul MERAH dengan silang)!');
+        console.log('❌ Opsi D adalah SALAH - langsung muncul silang merah saat diklik!');
     </script>
 
 </body>
