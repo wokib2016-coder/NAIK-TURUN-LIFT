@@ -916,7 +916,7 @@
             });
 
         // ================================================================
-        // 2. OPSI JAWABAN - TOGGLE / RESET
+        // 2. OPSI JAWABAN - TOMBOL TETAP AKTIF
         // ================================================================
         const optionItems = document.querySelectorAll('.option-item');
         const optionD = document.getElementById('optionD');
@@ -940,7 +940,7 @@
             feedback.textContent = '';
             selectedAnswer = null;
             isAnswered = false;
-            checkBtn.disabled = false;
+            checkBtn.disabled = false; // PASTIKAN TOMBOL AKTIF
             checkBtn.textContent = '🔍 Cek Jawaban';
         }
 
@@ -972,7 +972,7 @@
                         'angka timbangan masih &gt; 0.';
                     feedback.className = 'feedback show salah';
                     
-                    checkBtn.disabled = false;
+                    checkBtn.disabled = false; // TOMBOL TETAP AKTIF
                     checkBtn.textContent = '🔄 Reset Jawaban';
                 } else {
                     // Untuk opsi A, B, C, E → normal (centang biru)
@@ -984,7 +984,7 @@
                     
                     feedback.classList.remove('show', 'benar', 'salah');
                     feedback.textContent = '';
-                    checkBtn.disabled = false;
+                    checkBtn.disabled = false; // TOMBOL TETAP AKTIF
                     checkBtn.textContent = '🔍 Cek Jawaban';
                 }
             });
@@ -1004,7 +1004,7 @@
                 return;
             }
 
-            // Jika yang dipilih adalah D
+            // Jika yang dipilih adalah D (seharusnya tidak mungkin karena sudah langsung direset)
             if (selectedAnswer === 'D') {
                 resetAllOptions();
                 return;
@@ -1048,6 +1048,7 @@
             }
 
             isAnswered = true;
+            this.disabled = false; // PASTIKAN TOMBOL TETAP AKTIF
             this.textContent = '🔄 Reset Jawaban';
         });
 
@@ -1240,7 +1241,7 @@
         console.log('🚀 Simulasi Lift siap!');
         console.log('🔑 Kunci jawaban (BENAR):', correctAnswer);
         console.log('❌ Opsi D adalah SALAH - langsung muncul silang merah saat diklik!');
-        console.log('🔄 Tombol Cek Jawaban bisa diklik lagi untuk reset!');
+        console.log('🔄 Tombol Cek Jawaban TETAP AKTIF dan bisa diklik untuk reset!');
     </script>
 
 </body>
