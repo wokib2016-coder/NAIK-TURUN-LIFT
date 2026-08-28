@@ -774,7 +774,7 @@
             <button class="btn-check" id="checkBtn">🔍 Cek Jawaban</button>
             <div class="feedback" id="feedback"></div>
 
-            <!-- ✅ KUNCI JAWABAN: D TIDAK TERMASUK! -->
+            <!-- ✅ KUNCI JAWABAN: HANYA A, B, C, E -->
             <div style="display:none;" id="correctAnswer">A,B,C,E</div>
             <div style="display:none;" id="explanationText">
                 ✅ Jawaban BENAR: A, B, C, dan E<br><br>
@@ -885,7 +885,9 @@
         const optionItems = document.querySelectorAll('.option-item');
         const checkBtn = document.getElementById('checkBtn');
         const feedback = document.getElementById('feedback');
-        const correctAnswer = document.getElementById('correctAnswer').textContent; // "A,B,C,E"
+
+        // ✅ KUNCI JAWABAN YANG BENAR (D TIDAK ADA!)
+        const correctAnswers = ['A', 'B', 'C', 'E'];
         const explanationText = document.getElementById('explanationText').textContent;
 
         let selectedAnswer = null;
@@ -911,8 +913,8 @@
                 return;
             }
 
-            const correctAnswers = correctAnswer.split(','); // ['A','B','C','E']
-            const isCorrect = correctAnswers.includes(selectedAnswer); // D akan FALSE
+            // CEK APAKAH JAWABAN ADA DI KUNCI JAWABAN
+            const isCorrect = correctAnswers.includes(selectedAnswer);
 
             // DEBUG - LIHAT DI KONSOLE
             console.log('Jawaban dipilih:', selectedAnswer);
@@ -921,9 +923,11 @@
 
             optionItems.forEach(opt => {
                 opt.classList.add('disabled');
+                // HANYA tandai jawaban yang benar (A, B, C, E) dengan warna hijau
                 if (correctAnswers.includes(opt.dataset.answer)) {
                     opt.classList.add('show-correct');
                 }
+                // Tandai jawaban yang dipilih
                 if (opt.dataset.answer === selectedAnswer) {
                     if (isCorrect) {
                         opt.classList.add('correct');
@@ -1131,7 +1135,7 @@
         startAnimation();
 
         console.log('🚀 Simulasi Lift siap!');
-        console.log('🔑 Kunci jawaban (BENAR):', correctAnswer);
+        console.log('🔑 Kunci jawaban (BENAR):', correctAnswers);
         console.log('❌ Opsi D adalah SALAH!');
     </script>
 
