@@ -766,7 +766,7 @@
                 </div>
                 <div class="option-item" data-answer="D">
                     <span class="indicator">D</span>
-                    <span class="text-option">Angka pada timbangan dapat bernilai nol hanya jika tali lift putus dan lift bergerak turun</span>
+                    <span class="text-option">Angka pada timbangan dapat bernilai nol hanya jika tali lift putus sehingga lift bergerak turun.</span>
                     <span class="check-icon">✅</span>
                 </div>
                 <div class="option-item" data-answer="E">
@@ -779,13 +779,13 @@
             <button class="btn-check" id="checkBtn">🔍 Cek Jawaban</button>
             <div class="feedback" id="feedback"></div>
 
-            <div style="display:none;" id="correctAnswer">A,B,C,D,E</div>
+            <div style="display:none;" id="correctAnswer">A,B,C,E</div>
             <div style="display:none;" id="explanationText">
-                ✅ Semua pernyataan BENAR!<br><br>
+                ✅ Jawaban BENAR: A, B, C, dan E<br><br>
                 <b>A.</b> Saat kecepatan tetap (a=0), berat = massa × g → angka tetap.<br>
                 <b>B.</b> Percepatan ke atas → gaya normal bertambah → angka naik.<br>
                 <b>C.</b> Percepatan ke bawah → gaya normal berkurang → angka turun.<br>
-                <b>D.</b> Jika tali putus (jatuh bebas, a=g) → gaya normal = 0 → angka nol.<br>
+                <b>D.</b> ❌ SALAH. Angka nol (0 kg) terjadi saat <b>jatuh bebas (a = g)</b>, bukan hanya karena tali putus. Jika lift bergerak turun dengan percepatan &lt; g, angka timbangan masih &gt; 0.<br>
                 <b>E.</b> Timbangan berfungsi sebagai alat ukur muatan untuk keamanan.
             </div>
         </div>
@@ -1121,9 +1121,9 @@
 
         document.getElementById('btnDiam').addEventListener('click', function() { setMode('diam'); });
         document.getElementById('btnKecepatanTetapNaik').addEventListener('click', function() { setMode(
-            'kecepatan-tetap-naik'); });
+                'kecepatan-tetap-naik'); });
         document.getElementById('btnKecepatanTetapTurun').addEventListener('click', function() { setMode(
-            'kecepatan-tetap-turun'); });
+                'kecepatan-tetap-turun'); });
         document.getElementById('btnNaik').addEventListener('click', function() { setMode('naik'); });
         document.getElementById('btnTurun').addEventListener('click', function() { setMode('turun'); });
         document.getElementById('btnJatuh').addEventListener('click', function() { setMode('jatuh'); });
