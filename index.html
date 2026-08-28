@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Proyek Fisika - Lift</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(145deg, #0f1a24 0%, #1a2a3a 100%);
+            min-height: 100vh;
+            padding: 12px;
+        }
+        .main-container {
+            max-width: 460px;
+            margin: 0 auto;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(12px);
+            border-radius: 28px;
+            padding: 20px 18px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+        }
+        .card-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #6a9ab8;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .upload-area {
+            border: 2px dashed rgba(80, 160, 220, 0.3);
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(0, 40, 70, 0.2);
+            position: relative;
+            min-height: 130px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .upload-area:hover,
+        .upload-area.dragover {
+            border-color: #4fa3cc;
+            background: rgba(0, 80, 130, 0.2);
+        }
+        .upload-area .icon {
+            font-size: 2.8rem;
+            margin-bottom: 6px;
+            opacity: 0.6;
+        }
+        .upload-area .text {
+            color: #8ab3cc;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .upload-area .sub-text {
+            color: #4a7a92;
+            font-size: 0.65rem;
+            margin-top: 4px;
+        }
+        .upload-area input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .upload-area img {
+            max-width: 100%;
+            max-height: 250px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+        .upload-area .remove-btn {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            background: rgba(200, 50, 50, 0.8);
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            z-index: 5;
+            backdrop-filter: blur(4px);
+            transition: all 0.2s;
+        }
+        .upload-area .remove-btn:hover {
+            background: rgba(200, 50, 50, 1);
+            transform: scale(1.1);
+        }
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+            margin-top: 4px;
+        }
+        .option-item {
+            background: rgba(20, 50, 70, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 12px 14px;
+            font-size: 0.75rem;
+            color: #b6d6ed;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+        .option-item .indicator {
+            width: 24px;
+            height: 24px;
+            min-width: 24px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        .option-item .text-option {
+            flex: 1;
+        }
+        .option-item .check-icon {
+            display: none;
+            font-size: 1.1rem;
+            margin-left: auto;
+        }
+        .option-item.selected {
+            border-color: #4fa3cc;
+            background: rgba(0, 80, 130, 0.3);
+            box-shadow: 0 0 20px rgba(0, 180, 255, 0.08);
+        }
+        .option-item.selected .indicator {
+            border-color: #4fa3cc;
+            background: #1d6d94;
+            color: white;
+        }
+        .option-item.selected .check-icon {
+            display: block;
+            color: #4fa3cc;
+        }
+        .option-item.correct {
+            border-color: #4aca7a;
+            background: rgba(0, 200, 80, 0.12);
+        }
+        .option-item.correct .indicator {
+            border-color: #4aca7a;
+            background: #2a7a5a;
+            color: white;
+        }
+        .option-item.wrong {
+            border-color: #cc5555;
+            background: rgba(200, 50, 50, 0.12);
+        }
+        .option-item.wrong .indicator {
+            border-color: #cc5555;
+            background: #9e3a3a;
+            color: white;
+        }
+        .option-item.disabled {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+        .btn-check {
+            background: linear-gradient(145deg, #1d6d94, #0f4a68);
+            border: none;
+            border-radius: 40px;
+            padding: 12px 24px;
+            color: white;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 12px;
+            box-shadow: 0 4px 0 #0a2a3a;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+        }
+        .btn-check:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #0a2a3a;
+        }
+        .btn-check:disabled {
+            opacity: 0.4;
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #0a2a3a;
+            pointer-events: none;
+        }
+        .feedback {
+            margin-top: 10px;
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: center;
+            display: none;
+        }
+        .feedback.show {
+            display: block;
+        }
+        .feedback.benar {
+            background: rgba(0, 200, 80, 0.15);
+            border: 1px solid #4aca7a;
+            color: #8affb0;
+        }
+        .feedback.salah {
+            background: rgba(200, 50, 50, 0.15);
+            border: 1px solid #cc5555;
+            color: #ff8888;
+        }
+        .simulasi-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border-radius: 28px;
+            padding: 20px 16px 24px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+        }
+        .simulasi-title {
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.3rem;
+            color: #f0f9ff;
+            text-shadow: 0 2px 8px rgba(0, 20, 40, 0.6);
+            margin-bottom: 2px;
+        }
+        .simulasi-sub {
+            text-align: center;
+            font-size: 0.6rem;
+            color: #94b8d4;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            padding-bottom: 8px;
+        }
+        .shaft {
+            position: relative;
+            background: linear-gradient(180deg, #1e2e3e, #0e1a24);
+            border-radius: 50px 50px 20px 20px;
+            padding: 10px 12px 8px;
+            box-shadow: inset 0 8px 20px rgba(0, 0, 0, 0.8), 0 0 0 1px #3a4f62;
+            margin-bottom: 12px;
+        }
+        .shaft-inner {
+            position: relative;
+            background: #101e2a;
+            border-radius: 40px 40px 14px 14px;
+            height: 320px;
+            overflow: hidden;
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.7);
+            border-bottom: 2px solid #2e4a5e;
+        }
+        .floor-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(80, 160, 220, 0.15);
+            border-bottom: 1px dashed rgba(80, 160, 220, 0.08);
+        }
+        .floor-line:nth-child(1) {
+            top: 20%;
+        }
+        .floor-line:nth-child(2) {
+            top: 50%;
+        }
+        .floor-line:nth-child(3) {
+            top: 80%;
+        }
+        .floor-label {
+            position: absolute;
+            right: 6px;
+            font-size: 0.5rem;
+            color: #4b768e;
+            font-weight: 600;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 0 6px;
+            border-radius: 8px;
+        }
+        .floor-label:nth-child(4) {
+            top: calc(20% - 6px);
+        }
+        .floor-label:nth-child(5) {
+            top: calc(50% - 6px);
+        }
+        .floor-label:nth-child(6) {
+            top: calc(80% - 6px);
+        }
+        .lift-car {
+            position: absolute;
+            bottom: 8%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 36%;
+            background: linear-gradient(160deg, #4b6d88, #2a4560);
+            border-radius: 24px 24px 8px 8px;
+            box-shadow: 0 8px 0 #1b2e3d, 0 12px 30px rgba(0, 0, 0, 0.7);
+            transition: bottom 0.06s linear;
+            border: 1px solid #7a9bb5;
+            border-top: 2px solid #9ec0da;
+            overflow: visible;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 6px;
+        }
+        .lift-car::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 15%;
+            right: 15%;
+            height: 4px;
+            background: #7f9fb8;
+            border-radius: 6px;
+            opacity: 0.4;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.3);
+        }
+        .door-left,
+        .door-right {
+            position: absolute;
+            top: 4%;
+            width: 32%;
+            height: 86%;
+            background: linear-gradient(90deg, #1f3347, #15222e);
+            border: 1px solid #4a6a82;
+            border-radius: 10px 0 0 10px;
+            box-shadow: inset -4px 0 8px rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+        .door-right {
+            right: 5%;
+            border-radius: 0 10px 10px 0;
+            box-shadow: inset 4px 0 8px rgba(0, 0, 0, 0.5);
+        }
+        .door-left {
+            left: 5%;
+        }
+        .door-left::after {
+            content: '||';
+            position: absolute;
+            right: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8a9a6a;
+            font-size: 0.5rem;
+            letter-spacing: -2px;
+            opacity: 0.3;
+        }
+        .door-right::after {
+            content: '||';
+            position: absolute;
+            left: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8a9a6a;
+            font-size: 0.5rem;
+            letter-spacing: -2px;
+            opacity: 0.3;
+        }
+        .scale-container {
+            position: relative;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 80%;
+            margin-bottom: 2px;
+        }
+        .scale-display {
+            background: #0a121c;
+            padding: 2px 16px;
+            border-radius: 30px;
+            border: 2px solid #3a7a9a;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.9), 0 0 25px rgba(0, 180, 255, 0.15);
+            color: #b3eaff;
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            font-size: 1.3rem;
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px #0088cc, 0 0 30px rgba(0, 136, 204, 0.2);
+            min-width: 80px;
+            text-align: center;
+            backdrop-filter: blur(4px);
+            line-height: 1.6;
+        }
+        .scale-unit {
+            font-size: 0.5rem;
+            color: #6a9ab8;
+            letter-spacing: 1px;
+            font-weight: 400;
+            margin-top: -2px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0 10px;
+            border-radius: 10px;
+        }
+        .scale-platform {
+            width: 80%;
+            height: 5px;
+            background: linear-gradient(180deg, #4a6a7a, #1a2a3a);
+            border-radius: 3px;
+            border: 1px solid #5a7a8a;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+            margin-top: 1px;
+        }
+        .person {
+            position: relative;
+            z-index: 6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 0px;
+            transform: scale(0.85);
+        }
+        .person-body {
+            width: 28px;
+            height: 36px;
+            background: linear-gradient(180deg, #3a7abd, #1f4a7a);
+            border-radius: 14px 14px 8px 8px;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+            border: 1px solid #5a9add;
+        }
+        .person-head {
+            width: 22px;
+            height: 22px;
+            background: radial-gradient(circle at 35% 35%, #f5d6b8, #dba87a);
+            border-radius: 50%;
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            border: 1px solid #eac09a;
+        }
+        .person-head::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: 3px;
+            width: 16px;
+            height: 9px;
+            background: #3a2a1a;
+            border-radius: 50% 50% 0 0 / 80% 80% 0 0;
+        }
+        .eye {
+            position: absolute;
+            width: 3.5px;
+            height: 3.5px;
+            background: #1a1a2a;
+            border-radius: 50%;
+            top: 6px;
+        }
+        .eye-left {
+            left: 4.5px;
+        }
+        .eye-right {
+            right: 4.5px;
+        }
+        .mouth {
+            position: absolute;
+            width: 6px;
+            height: 3px;
+            border-bottom: 2px solid #8a4a3a;
+            border-radius: 0 0 12px 12px;
+            bottom: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .arm-left {
+            position: absolute;
+            left: -8px;
+            top: 5px;
+            width: 5px;
+            height: 22px;
+            background: #dba87a;
+            border-radius: 6px;
+            transform: rotate(25deg);
+            transform-origin: top center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .arm-right {
+            position: absolute;
+            right: -8px;
+            top: 5px;
+            width: 5px;
+            height: 22px;
+            background: #dba87a;
+            border-radius: 6px;
+            transform: rotate(-20deg);
+            transform-origin: top center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .clipboard {
+            position: absolute;
+            right: -18px;
+            top: 9px;
+            width: 14px;
+            height: 18px;
+            background: #f5f0e0;
+            border-radius: 2px;
+            border: 1px solid #8a7a5a;
+            transform: rotate(12deg);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        .clipboard::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            height: 3px;
+            background: #c0b090;
+            border-radius: 1px;
+            box-shadow: 0 5px 0 #c0b090, 0 10px 0 #c0b090;
+        }
+        .leg-left,
+        .leg-right {
+            position: absolute;
+            bottom: -14px;
+            width: 7px;
+            height: 14px;
+            background: #1a2a4a;
+            border-radius: 0 0 4px 4px;
+        }
+        .leg-left {
+            left: 3px;
+            transform: rotate(4deg);
+        }
+        .leg-right {
+            right: 3px;
+            transform: rotate(-4deg);
+        }
+        .leg-left::after,
+        .leg-right::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: -2px;
+            width: 11px;
+            height: 5px;
+            background: #2a2a3a;
+            border-radius: 6px 10px 4px 4px;
+        }
+        .person-on-scale {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        @keyframes shake {
+            0%,
+            100% {
+                transform: translateX(-50%) rotate(0deg);
+            }
+            25% {
+                transform: translateX(-47%) rotate(2deg);
+            }
+            75% {
+                transform: translateX(-53%) rotate(-2deg);
+            }
+        }
+        .shake {
+            animation: shake 0.2s infinite alternate;
+        }
+        .info-panel {
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 20px;
+            padding: 10px 14px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 4px 8px;
+        }
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #b6d6ed;
+            font-size: 0.65rem;
+            font-weight: 500;
+        }
+        .info-item span {
+            color: #e6f7ff;
+            font-weight: 700;
+            background: rgba(0, 80, 130, 0.3);
+            padding: 1px 10px;
+            border-radius: 30px;
+            border: 1px solid #2d6f8f;
+            font-size: 0.75rem;
+        }
+        .status-badge {
+            background: #0e2a3a;
+            padding: 2px 10px;
+            border-radius: 40px;
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: #9acce6;
+            border: 1px solid #2e6d8a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 2px;
+        }
+        .btn {
+            background: rgba(20, 50, 70, 0.7);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 10px 4px;
+            border-radius: 32px;
+            color: #d4ecff;
+            font-weight: 600;
+            font-size: 0.7rem;
+            letter-spacing: 0.3px;
+            transition: all 0.12s ease;
+            box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            text-align: center;
+            line-height: 1.2;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+        }
+        .btn-primary {
+            background: linear-gradient(145deg, #1d6d94, #0f4a68);
+            border-color: #4fa3cc;
+            color: white;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+        }
+        .btn-success {
+            background: linear-gradient(145deg, #2a7a5a, #1a523a);
+            border-color: #4caa80;
+            color: #e0ffef;
+        }
+        .btn-warning {
+            background: linear-gradient(145deg, #a77a2a, #73521a);
+            border-color: #dbb042;
+            color: #fff3d0;
+        }
+        .btn-danger {
+            background: linear-gradient(145deg, #9e3a3a, #6e2222);
+            border-color: #c95a5a;
+            color: #ffe0e0;
+        }
+        .btn-full {
+            grid-column: 1 / -1;
+        }
+        .btn-reset {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid #2a4a5a;
+            color: #8ab3cc;
+            font-size: 0.6rem;
+            padding: 6px;
+            min-height: 32px;
+        }
+        .footer {
+            margin-top: 12px;
+            text-align: center;
+            font-size: 0.5rem;
+            color: #3d6a82;
+            letter-spacing: 0.5px;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+            padding-top: 10px;
+        }
+        @media (max-width: 400px) {
+            .card {
+                padding: 14px 12px;
+            }
+            .upload-area {
+                padding: 20px 14px;
+                min-height: 100px;
+            }
+            .upload-area .icon {
+                font-size: 2rem;
+            }
+            .shaft-inner {
+                height: 260px;
+            }
+            .scale-display {
+                font-size: 1rem;
+                min-width: 60px;
+                padding: 1px 8px;
+            }
+            .btn {
+                font-size: 0.6rem;
+                padding: 6px 4px;
+                min-height: 34px;
+            }
+            .info-item {
+                font-size: 0.55rem;
+            }
+            .person-body {
+                width: 22px;
+                height: 28px;
+            }
+            .person-head {
+                width: 16px;
+                height: 16px;
+                top: -14px;
+            }
+            .arm-left,
+            .arm-right {
+                height: 16px;
+                width: 4px;
+            }
+            .leg-left,
+            .leg-right {
+                height: 10px;
+                width: 5px;
+            }
+            .clipboard {
+                width: 10px;
+                height: 14px;
+                right: -14px;
+                top: 7px;
+            }
+            .eye {
+                width: 3px;
+                height: 3px;
+            }
+            .lift-car {
+                height: 34%;
+            }
+            .option-item {
+                font-size: 0.7rem;
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+
+        <!-- ============================================================ -->
+        <!-- 1. UPLOAD SOAL -->
+        <!-- ============================================================ -->
+        <div class="card">
+            <div class="card-title">📄 Upload Soal (JPG/PNG)</div>
+            <div class="upload-area" id="uploadArea">
+                <span class="icon">🖼️</span>
+                <span class="text">Klik atau tap untuk upload soal</span>
+                <span class="sub-text">Format JPG / PNG</span>
+                <input type="file" id="fileInput" accept="image/*" />
+                <button class="remove-btn" id="removeBtn" style="display:none;">✕</button>
+            </div>
+            <div id="imagePreview" style="margin-top: 8px; display: none; text-align: center;">
+                <img id="previewImg" style="max-width:100%; max-height:200px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);" />
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 2. OPSI JAWABAN INTERAKTIF -->
+        <!-- ============================================================ -->
+        <div class="card">
+            <div class="card-title">✅ Pilih Jawaban yang BENAR</div>
+            <div class="options-grid" id="optionsGrid">
+                <div class="option-item" data-answer="A">
+                    <span class="indicator">A</span>
+                    <span class="text-option">Angka pada timbangan akan tetap hanya jika lift bergerak dengan kecepatan tetap</span>
+                    <span class="check-icon">✅</span>
+                </div>
+                <div class="option-item" data-answer="B">
+                    <span class="indicator">B</span>
+                    <span class="text-option">Angka pada timbangan akan naik jika lift bergerak dipercepat ke atas</span>
+                    <span class="check-icon">✅</span>
+                </div>
+                <div class="option-item" data-answer="C">
+                    <span class="indicator">C</span>
+                    <span class="text-option">Angka pada timbangan akan turun jika lift bergerak dipercepat ke bawah</span>
+                    <span class="check-icon">✅</span>
+                </div>
+                <div class="option-item" data-answer="D">
+                    <span class="indicator">D</span>
+                    <span class="text-option">Angka pada timbangan dapat bernilai nol hanya jika tali lift putus dan lift bergerak turun</span>
+                    <span class="check-icon">✅</span>
+                </div>
+                <div class="option-item" data-answer="E">
+                    <span class="indicator">E</span>
+                    <span class="text-option">Timbangan berfungsi untuk memastikan lift tidak kelebihan muatan saat dioperasikan</span>
+                    <span class="check-icon">✅</span>
+                </div>
+            </div>
+
+            <button class="btn-check" id="checkBtn">🔍 Cek Jawaban</button>
+            <div class="feedback" id="feedback"></div>
+
+            <!-- Kunci Jawaban: SEMUA BENAR (A,B,C,D,E) -->
+            <div style="display:none;" id="correctAnswer">A,B,C,D,E</div>
+            <div style="display:none;" id="explanationText">
+                ✅ Semua pernyataan BENAR!<br><br>
+                <b>A.</b> Saat kecepatan tetap (a=0), berat = massa × g → angka tetap.<br>
+                <b>B.</b> Percepatan ke atas → gaya normal bertambah → angka naik.<br>
+                <b>C.</b> Percepatan ke bawah → gaya normal berkurang → angka turun.<br>
+                <b>D.</b> Jika tali putus (jatuh bebas, a=g) → gaya normal = 0 → angka nol.<br>
+                <b>E.</b> Timbangan berfungsi sebagai alat ukur muatan untuk keamanan.
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 3. SIMULASI INTERAKTIF -->
+        <!-- ============================================================ -->
+        <div class="simulasi-container">
+            <div class="simulasi-title">⚙️ LIFT FISIKA</div>
+            <div class="simulasi-sub">Simulasi Gaya &amp; Percepatan</div>
+
+            <div class="shaft">
+                <div class="shaft-inner" id="shaftInner">
+                    <div class="floor-line"></div>
+                    <div class="floor-line"></div>
+                    <div class="floor-line"></div>
+                    <div class="floor-label">L3</div>
+                    <div class="floor-label">L2</div>
+                    <div class="floor-label">L1</div>
+
+                    <div class="lift-car" id="liftCar">
+                        <div class="door-left"></div>
+                        <div class="door-right"></div>
+
+                        <div class="person-on-scale">
+                            <div class="person" id="person">
+                                <div class="person-body">
+                                    <div class="person-head">
+                                        <div class="eye eye-left"></div>
+                                        <div class="eye eye-right"></div>
+                                        <div class="mouth"></div>
+                                    </div>
+                                    <div class="arm-left"></div>
+                                    <div class="arm-right"></div>
+                                    <div class="clipboard"></div>
+                                    <div class="leg-left"></div>
+                                    <div class="leg-right"></div>
+                                </div>
+                            </div>
+
+                            <div class="scale-container">
+                                <div class="scale-display" id="scaleDisplay">65</div>
+                                <div class="scale-unit">kg</div>
+                                <div class="scale-platform"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-panel">
+                <div class="info-item">🧑‍🔬 <span id="massDisplay">65</span> kg</div>
+                <div class="info-item">⏱️ <span id="accelDisplay">0.0</span> m/s²</div>
+                <div class="status-badge" id="statusBadge">● Diam</div>
+            </div>
+
+            <div class="btn-grid">
+                <button class="btn btn-primary" id="btnDiam">🛑 Diam</button>
+                <button class="btn btn-primary" id="btnKecepatanTetapNaik">⬆️ Kecepatan Tetap Naik</button>
+                <button class="btn btn-primary" id="btnKecepatanTetapTurun">⬇️ Kecepatan Tetap Turun</button>
+                <button class="btn btn-success" id="btnNaik">⬆️ Percepat ke Atas</button>
+                <button class="btn btn-warning" id="btnTurun">⬇️ Percepat ke Bawah</button>
+                <button class="btn btn-danger btn-full" id="btnJatuh">💥 Jatuh Bebas (Tali Putus)</button>
+            </div>
+
+            <div style="margin-top: 10px; display: flex; gap: 8px;">
+                <button class="btn btn-reset" id="resetPosBtn" style="flex:1;">↺ Reset Posisi (Lantai 2)</button>
+                <button class="btn btn-reset" id="resetAllBtn" style="flex:1;">↻ Reset Semua</button>
+            </div>
+
+            <div class="footer">👷 Insinyur 65 kg berdiri di atas timbangan di dalam lift</div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- JAVASCRIPT LENGKAP -->
+    <!-- ============================================================ -->
+    <script>
+        // ================================================================
+        // 1. UPLOAD SOAL
+        // ================================================================
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const removeBtn = document.getElementById('removeBtn');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewImg = document.getElementById('previewImg');
+
+        function handleFile(file) {
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                    uploadArea.style.display = 'none';
+                    removeBtn.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert('Mohon upload file gambar (JPG/PNG)');
+            }
+        }
+
+        fileInput.addEventListener('change', function(e) {
+            if (this.files.length > 0) {
+                handleFile(this.files[0]);
+            }
+        });
+
+        uploadArea.addEventListener('click', function() {
+            fileInput.click();
+        });
+
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        removeBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            imagePreview.style.display = 'none';
+            uploadArea.style.display = 'flex';
+            removeBtn.style.display = 'none';
+            previewImg.src = '';
+            fileInput.value = '';
+        });
+
+        // ================================================================
+        // 2. OPSI JAWABAN INTERAKTIF
+        // ================================================================
+        const optionItems = document.querySelectorAll('.option-item');
+        const checkBtn = document.getElementById('checkBtn');
+        const feedback = document.getElementById('feedback');
+        const correctAnswer = document.getElementById('correctAnswer').textContent;
+        const explanationText = document.getElementById('explanationText').textContent;
+
+        let selectedAnswer = null;
+
+        optionItems.forEach(item => {
+            item.addEventListener('click', function() {
+                optionItems.forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedAnswer = this.dataset.answer;
+                feedback.classList.remove('show', 'benar', 'salah');
+                feedback.textContent = '';
+                optionItems.forEach(opt => {
+                    opt.classList.remove('correct', 'wrong', 'show-correct', 'disabled');
+                });
+                checkBtn.disabled = false;
+            });
+        });
+
+        checkBtn.addEventListener('click', function() {
+            if (!selectedAnswer) {
+                feedback.textContent = '⚠️ Silakan pilih jawaban terlebih dahulu!';
+                feedback.className = 'feedback show salah';
+                return;
+            }
+
+            const correctAnswers = correctAnswer.split(',');
+            const isCorrect = correctAnswers.includes(selectedAnswer);
+
+            optionItems.forEach(opt => {
+                opt.classList.add('disabled');
+                if (correctAnswers.includes(opt.dataset.answer)) {
+                    opt.classList.add('show-correct');
+                }
+                if (opt.dataset.answer === selectedAnswer) {
+                    if (isCorrect) {
+                        opt.classList.add('correct');
+                    } else {
+                        opt.classList.add('wrong');
+                    }
+                }
+            });
+
+            if (isCorrect) {
+                feedback.textContent = '✅ ' + explanationText;
+                feedback.className = 'feedback show benar';
+            } else {
+                feedback.textContent = '❌ Jawaban Anda kurang tepat. Coba perhatikan simulasi!';
+                feedback.className = 'feedback show salah';
+            }
+
+            this.disabled = true;
+        });
+
+        // ================================================================
+        // 3. SIMULASI INTERAKTIF
+        // ================================================================
+        const liftCar = document.getElementById('liftCar');
+        const scaleDisplay = document.getElementById('scaleDisplay');
+        const massDisplay = document.getElementById('massDisplay');
+        const accelDisplay = document.getElementById('accelDisplay');
+        const statusBadge = document.getElementById('statusBadge');
+        const person = document.getElementById('person');
+
+        const MASS = 65;
+        const G = 9.8;
+
+        let currentMode = 'diam';
+        let animationFrame = null;
+        let lastTimestamp = 0;
+        let liftPosition = 50; // LANTAI 2 (tengah)
+        const POS_MIN = 4;
+        const POS_MAX = 88;
+        const SPEED_CONSTANT = 22;
+        const ACCEL_SPEED = 28;
+
+        function updateDisplay(mode) {
+            let weight = MASS;
+            let accel = 0;
+            let statusText = '';
+
+            switch (mode) {
+                case 'diam':
+                    weight = MASS;
+                    accel = 0;
+                    statusText = '● Diam';
+                    break;
+                case 'kecepatan-tetap-naik':
+                    weight = MASS;
+                    accel = 0;
+                    statusText = '➡️ Kecepatan Tetap Naik';
+                    break;
+                case 'kecepatan-tetap-turun':
+                    weight = MASS;
+                    accel = 0;
+                    statusText = '➡️ Kecepatan Tetap Turun';
+                    break;
+                case 'naik':
+                    const aUp = 2.0;
+                    weight = MASS * (1 + aUp / G);
+                    accel = aUp;
+                    statusText = '⬆️ Percepat Atas';
+                    break;
+                case 'turun':
+                    const aDown = -2.0;
+                    weight = MASS * (1 + aDown / G);
+                    accel = aDown;
+                    statusText = '⬇️ Percepat Bawah';
+                    break;
+                case 'jatuh':
+                    weight = 0;
+                    accel = -G;
+                    statusText = '💥 Jatuh Bebas';
+                    break;
+                default:
+                    weight = MASS;
+                    accel = 0;
+                    statusText = '● Diam';
+            }
+
+            weight = Math.max(0, Math.round(weight * 10) / 10);
+            accel = Math.round(accel * 10) / 10;
+
+            scaleDisplay.textContent = weight;
+            massDisplay.textContent = MASS;
+            accelDisplay.textContent = accel.toFixed(1);
+            statusBadge.textContent = statusText;
+
+            // Efek visual
+            if (mode === 'jatuh') {
+                scaleDisplay.style.color = '#ff7777';
+                scaleDisplay.style.textShadow = '0 0 25px #ff3333';
+                scaleDisplay.style.borderColor = '#cc5555';
+                person.classList.add('shake');
+            } else {
+                scaleDisplay.style.color = '#b3eaff';
+                scaleDisplay.style.textShadow = '0 0 15px #0088cc';
+                scaleDisplay.style.borderColor = '#3a7a9a';
+                person.classList.remove('shake');
+            }
+
+            if (mode === 'naik') {
+                scaleDisplay.style.color = '#8affb0';
+                scaleDisplay.style.textShadow = '0 0 25px #00cc66';
+                scaleDisplay.style.borderColor = '#4aca7a';
+            } else if (mode === 'turun') {
+                scaleDisplay.style.color = '#ffcc77';
+                scaleDisplay.style.textShadow = '0 0 25px #cc8800';
+                scaleDisplay.style.borderColor = '#cabb4a';
+            }
+        }
+
+        function updateLiftPosition() {
+            liftCar.style.bottom = liftPosition + '%';
+        }
+
+        function moveLift(mode, deltaSec) {
+            if (deltaSec <= 0 || deltaSec > 0.1) deltaSec = 0.016;
+            let moveAmount = 0;
+
+            switch (mode) {
+                case 'diam':
+                    break;
+                case 'kecepatan-tetap-naik':
+                    moveAmount = SPEED_CONSTANT * deltaSec;
+                    break;
+                case 'kecepatan-tetap-turun':
+                    moveAmount = -SPEED_CONSTANT * deltaSec;
+                    break;
+                case 'naik':
+                    moveAmount = ACCEL_SPEED * deltaSec;
+                    break;
+                case 'turun':
+                    moveAmount = -ACCEL_SPEED * deltaSec;
+                    break;
+                case 'jatuh':
+                    const fallSpeed = 35 + (100 - liftPosition) * 0.3;
+                    moveAmount = -Math.min(fallSpeed * deltaSec, 15);
+                    break;
+                default:
+                    break;
+            }
+
+            let newPos = liftPosition + moveAmount;
+            newPos = Math.max(POS_MIN, Math.min(POS_MAX, newPos));
+            liftPosition = newPos;
+            updateLiftPosition();
+        }
+
+        function animate(timestamp) {
+            if (!lastTimestamp) lastTimestamp = timestamp;
+            const delta = (timestamp - lastTimestamp) / 1000;
+            lastTimestamp = timestamp;
+            const safeDelta = Math.min(delta, 0.05);
+
+            moveLift(currentMode, safeDelta);
+            updateDisplay(currentMode);
+            animationFrame = requestAnimationFrame(animate);
+        }
+
+        function startAnimation() {
+            if (animationFrame) {
+                cancelAnimationFrame(animationFrame);
+                animationFrame = null;
+            }
+            lastTimestamp = 0;
+            animationFrame = requestAnimationFrame(animate);
+        }
+
+        function setMode(mode) {
+            currentMode = mode;
+            updateDisplay(mode);
+            lastTimestamp = 0;
+        }
+
+        function resetPosition() {
+            liftPosition = 50; // LANTAI 2 (tengah)
+            updateLiftPosition();
+            lastTimestamp = 0;
+        }
+
+        function resetAll() {
+            resetPosition();
+            setMode('diam');
+        }
+
+        // ================================================================
+        // EVENT LISTENER UNTUK TOMBOL
+        // ================================================================
+        document.getElementById('btnDiam').addEventListener('click', function() {
+            setMode('diam');
+        });
+
+        document.getElementById('btnKecepatanTetapNaik').addEventListener('click', function() {
+            setMode('kecepatan-tetap-naik');
+        });
+
+        document.getElementById('btnKecepatanTetapTurun').addEventListener('click', function() {
+            setMode('kecepatan-tetap-turun');
+        });
+
+        document.getElementById('btnNaik').addEventListener('click', function() {
+            setMode('naik');
+        });
+
+        document.getElementById('btnTurun').addEventListener('click', function() {
+            setMode('turun');
+        });
+
+        document.getElementById('btnJatuh').addEventListener('click', function() {
+            setMode('jatuh');
+        });
+
+        document.getElementById('resetPosBtn').addEventListener('click', resetPosition);
+        document.getElementById('resetAllBtn').addEventListener('click', resetAll);
+
+        // ================================================================
+        // START SIMULATION
+        // ================================================================
+        setMode('diam');
+        resetPosition();
+        startAnimation();
+
+        console.log('🚀 Simulasi Lift siap!');
+    </script>
+
+</body>
+</html>
