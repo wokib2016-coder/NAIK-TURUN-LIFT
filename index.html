@@ -885,7 +885,7 @@
         const optionItems = document.querySelectorAll('.option-item');
         const checkBtn = document.getElementById('checkBtn');
         const feedback = document.getElementById('feedback');
-        const correctAnswer = document.getElementById('correctAnswer').textContent; // "A,B,C,E"
+        const correctAnswer = document.getElementById('correctAnswer').textContent;
         const explanationText = document.getElementById('explanationText').textContent;
 
         let selectedAnswer = null;
@@ -911,8 +911,8 @@
                 return;
             }
 
-            const correctAnswers = correctAnswer.split(','); // ['A','B','C','E']
-            const isCorrect = correctAnswers.includes(selectedAnswer); // D akan FALSE
+            const correctAnswers = correctAnswer.split(',');
+            const isCorrect = correctAnswers.includes(selectedAnswer);
 
             optionItems.forEach(opt => {
                 opt.classList.add('disabled');
