@@ -37,73 +37,29 @@
             margin-bottom: 12px;
             font-weight: 600;
         }
-        .upload-area {
-            border: 2px dashed rgba(80, 160, 220, 0.3);
-            border-radius: 20px;
-            padding: 30px 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: rgba(0, 40, 70, 0.2);
-            position: relative;
-            min-height: 130px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        .upload-area:hover,
-        .upload-area.dragover {
-            border-color: #4fa3cc;
-            background: rgba(0, 80, 130, 0.2);
-        }
-        .upload-area .icon {
-            font-size: 2.8rem;
-            margin-bottom: 6px;
-            opacity: 0.6;
-        }
-        .upload-area .text {
-            color: #8ab3cc;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-        .upload-area .sub-text {
-            color: #4a7a92;
-            font-size: 0.65rem;
-            margin-top: 4px;
-        }
-        .upload-area input[type="file"] {
-            position: absolute;
-            inset: 0;
-            opacity: 0;
-            cursor: pointer;
-        }
-        .upload-area img {
-            max-width: 100%;
-            max-height: 250px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        /* ===== AREA GAMBAR SOAL (tanpa upload) ===== */
+        .soal-image {
+            width: 100%;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            display: none;
         }
-        .upload-area .remove-btn {
-            position: absolute;
-            top: 8px;
-            right: 12px;
-            background: rgba(200, 50, 50, 0.8);
-            border: none;
-            color: white;
-            border-radius: 50%;
-            width: 28px;
-            height: 28px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            z-index: 5;
-            backdrop-filter: blur(4px);
-            transition: all 0.2s;
+        .soal-image.show {
+            display: block;
         }
-        .upload-area .remove-btn:hover {
-            background: rgba(200, 50, 50, 1);
-            transform: scale(1.1);
+        .no-image {
+            text-align: center;
+            padding: 30px 20px;
+            color: #4a7a92;
+            font-size: 0.85rem;
+            border: 2px dashed rgba(80, 160, 220, 0.2);
+            border-radius: 16px;
+        }
+        .no-image .icon {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+            opacity: 0.5;
         }
         .options-grid {
             display: grid;
@@ -708,13 +664,6 @@
             .card {
                 padding: 14px 12px;
             }
-            .upload-area {
-                padding: 20px 14px;
-                min-height: 100px;
-            }
-            .upload-area .icon {
-                font-size: 2rem;
-            }
             .shaft-inner {
                 height: 260px;
             }
@@ -775,19 +724,15 @@
     <div class="main-container">
 
         <!-- ============================================================ -->
-        <!-- 1. UPLOAD SOAL -->
+        <!-- 1. GAMBAR SOAL (otomatis dari soal.jpg) -->
         <!-- ============================================================ -->
         <div class="card">
-            <div class="card-title">📄 Upload Soal (JPG/PNG)</div>
-            <div class="upload-area" id="uploadArea">
-                <span class="icon">🖼️</span>
-                <span class="text">Klik atau tap untuk upload soal</span>
-                <span class="sub-text">Format JPG / PNG</span>
-                <input type="file" id="fileInput" accept="image/*" />
-                <button class="remove-btn" id="removeBtn" style="display:none;">✕</button>
-            </div>
-            <div id="imagePreview" style="margin-top: 8px; display: none; text-align: center;">
-                <img id="previewImg" style="max-width:100%; max-height:200px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);" />
+            <div class="card-title">📄 Soal</div>
+            <img id="soalImage" class="soal-image" src="" alt="Soal" />
+            <div id="noImage" class="no-image">
+                <div class="icon">🖼️</div>
+                <div>Belum ada gambar soal</div>
+                <div style="font-size:0.65rem; margin-top:4px; opacity:0.6;">Simpan file dengan nama <b>soal.jpg</b> di folder yang sama</div>
             </div>
         </div>
 
@@ -910,89 +855,32 @@
     </div>
 
     <!-- ============================================================ -->
-    <!-- JAVASCRIPT LENGKAP -->
+    <!-- JAVASCRIPT -->
     <!-- ============================================================ -->
     <script>
         // ================================================================
-        // 1. UPLOAD SOAL + OTOMATIS BACA soal.jpg
+        // 1. MUAT GAMBAR SOAL OTOMATIS DARI soal.jpg
         // ================================================================
-        const uploadArea = document.getElementById('uploadArea');
-        const fileInput = document.getElementById('fileInput');
-        const removeBtn = document.getElementById('removeBtn');
-        const imagePreview = document.getElementById('imagePreview');
-        const previewImg = document.getElementById('previewImg');
+        const soalImage = document.getElementById('soalImage');
+        const noImage = document.getElementById('noImage');
 
-        function handleFile(file) {
-            if (file && file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    previewImg.src = e.target.result;
-                    imagePreview.style.display = 'block';
-                    uploadArea.style.display = 'none';
-                    removeBtn.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            } else {
-                alert('Mohon upload file gambar (JPG/PNG)');
-            }
-        }
-
-        // ================================================================
-        // OTOMATIS BACA FILE soal.jpg (TANPA UPLOAD)
-        // ================================================================
         fetch('soal.jpg')
             .then(res => {
                 if (!res.ok) throw new Error('File tidak ditemukan');
                 return res.blob();
             })
             .then(blob => {
-                const file = new File([blob], 'soal.jpg', { type: 'image/jpeg' });
-                handleFile(file);
-                console.log('✅ soal.jpg berhasil dimuat otomatis!');
+                const url = URL.createObjectURL(blob);
+                soalImage.src = url;
+                soalImage.classList.add('show');
+                noImage.style.display = 'none';
+                console.log('✅ soal.jpg berhasil dimuat!');
             })
             .catch(() => {
-                console.log('📄 soal.jpg tidak ditemukan. Silakan upload manual.');
+                console.log('📄 soal.jpg tidak ditemukan.');
+                soalImage.classList.remove('show');
+                noImage.style.display = 'block';
             });
-
-        // ================================================================
-        // UPLOAD MANUAL (CADANGAN)
-        // ================================================================
-        fileInput.addEventListener('change', function(e) {
-            if (this.files.length > 0) {
-                handleFile(this.files[0]);
-            }
-        });
-
-        uploadArea.addEventListener('click', function() {
-            fileInput.click();
-        });
-
-        uploadArea.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            this.classList.add('dragover');
-        });
-
-        uploadArea.addEventListener('dragleave', function(e) {
-            e.preventDefault();
-            this.classList.remove('dragover');
-        });
-
-        uploadArea.addEventListener('drop', function(e) {
-            e.preventDefault();
-            this.classList.remove('dragover');
-            if (e.dataTransfer.files.length > 0) {
-                handleFile(e.dataTransfer.files[0]);
-            }
-        });
-
-        removeBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            imagePreview.style.display = 'none';
-            uploadArea.style.display = 'flex';
-            removeBtn.style.display = 'none';
-            previewImg.src = '';
-            fileInput.value = '';
-        });
 
         // ================================================================
         // 2. OPSI JAWABAN INTERAKTIF
@@ -1070,7 +958,7 @@
         let currentMode = 'diam';
         let animationFrame = null;
         let lastTimestamp = 0;
-        let liftPosition = 50; // LANTAI 2 (tengah)
+        let liftPosition = 50;
         const POS_MIN = 4;
         const POS_MAX = 88;
         const SPEED_CONSTANT = 22;
@@ -1128,7 +1016,6 @@
             accelDisplay.textContent = accel.toFixed(1);
             statusBadge.textContent = statusText;
 
-            // Efek visual
             if (mode === 'jatuh') {
                 scaleDisplay.style.color = '#ff7777';
                 scaleDisplay.style.textShadow = '0 0 25px #ff3333';
@@ -1216,7 +1103,7 @@
         }
 
         function resetPosition() {
-            liftPosition = 50; // LANTAI 2 (tengah)
+            liftPosition = 50;
             updateLiftPosition();
             lastTimestamp = 0;
         }
@@ -1226,39 +1113,17 @@
             setMode('diam');
         }
 
-        // ================================================================
-        // EVENT LISTENER UNTUK TOMBOL
-        // ================================================================
-        document.getElementById('btnDiam').addEventListener('click', function() {
-            setMode('diam');
-        });
-
-        document.getElementById('btnKecepatanTetapNaik').addEventListener('click', function() {
-            setMode('kecepatan-tetap-naik');
-        });
-
-        document.getElementById('btnKecepatanTetapTurun').addEventListener('click', function() {
-            setMode('kecepatan-tetap-turun');
-        });
-
-        document.getElementById('btnNaik').addEventListener('click', function() {
-            setMode('naik');
-        });
-
-        document.getElementById('btnTurun').addEventListener('click', function() {
-            setMode('turun');
-        });
-
-        document.getElementById('btnJatuh').addEventListener('click', function() {
-            setMode('jatuh');
-        });
-
+        document.getElementById('btnDiam').addEventListener('click', function() { setMode('diam'); });
+        document.getElementById('btnKecepatanTetapNaik').addEventListener('click', function() { setMode(
+            'kecepatan-tetap-naik'); });
+        document.getElementById('btnKecepatanTetapTurun').addEventListener('click', function() { setMode(
+            'kecepatan-tetap-turun'); });
+        document.getElementById('btnNaik').addEventListener('click', function() { setMode('naik'); });
+        document.getElementById('btnTurun').addEventListener('click', function() { setMode('turun'); });
+        document.getElementById('btnJatuh').addEventListener('click', function() { setMode('jatuh'); });
         document.getElementById('resetPosBtn').addEventListener('click', resetPosition);
         document.getElementById('resetAllBtn').addEventListener('click', resetAll);
 
-        // ================================================================
-        // START SIMULATION
-        // ================================================================
         setMode('diam');
         resetPosition();
         startAnimation();
