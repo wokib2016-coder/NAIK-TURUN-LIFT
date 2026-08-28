@@ -228,6 +228,8 @@
             border: 1px solid #cc5555;
             color: #ff8888;
         }
+
+        /* ===== SIMULASI ===== */
         .simulasi-container {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(12px);
@@ -235,7 +237,53 @@
             padding: 20px 16px 24px;
             border: 1px solid rgba(255, 255, 255, 0.06);
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s ease;
+            overflow: hidden;
+            max-height: 2000px;
         }
+        .simulasi-container.hidden {
+            max-height: 0;
+            padding: 0 16px;
+            margin: 0;
+            border: none;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .simulasi-toggle {
+            background: rgba(20, 50, 70, 0.7);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 12px 20px;
+            border-radius: 32px;
+            color: #d4ecff;
+            font-weight: 600;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            transition: all 0.12s ease;
+            box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            text-align: center;
+            width: 100%;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .simulasi-toggle:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+        }
+        .simulasi-toggle .arrow {
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+        .simulasi-toggle .arrow.open {
+            transform: rotate(180deg);
+        }
+
         .simulasi-title {
             text-align: center;
             font-weight: 600;
@@ -822,8 +870,15 @@
             </div>
         </div>
 
+        <!-- ===== TOMBOL TOGGLE SIMULASI ===== -->
+        <button class="simulasi-toggle" id="simulasiToggle">
+            <span>🔬</span>
+            <span id="toggleLabel">Tampilkan Simulasi Fisika</span>
+            <span class="arrow" id="toggleArrow">▼</span>
+        </button>
+
         <!-- SIMULASI -->
-        <div class="simulasi-container">
+        <div class="simulasi-container hidden" id="simulasiContainer">
             <div class="simulasi-title">⚙️ LIFT FISIKA</div>
             <div class="simulasi-sub">Simulasi Gaya &amp; Percepatan</div>
 
@@ -916,7 +971,29 @@
             });
 
         // ================================================================
-        // 2. OPSI JAWABAN - TOMBOL TETAP AKTIF
+        // 2. TOGGLE SIMULASI
+        // ================================================================
+        const simulasiContainer = document.getElementById('simulasiContainer');
+        const simulasiToggle = document.getElementById('simulasiToggle');
+        const toggleLabel = document.getElementById('toggleLabel');
+        const toggleArrow = document.getElementById('toggleArrow');
+        let isSimulasiVisible = false;
+
+        simulasiToggle.addEventListener('click', function() {
+            isSimulasiVisible = !isSimulasiVisible;
+            if (isSimulasiVisible) {
+                simulasiContainer.classList.remove('hidden');
+                toggleLabel.textContent = 'Sembunyikan Simulasi Fisika';
+                toggleArrow.classList.add('open');
+            } else {
+                simulasiContainer.classList.add('hidden');
+                toggleLabel.textContent = 'Tampilkan Simulasi Fisika';
+                toggleArrow.classList.remove('open');
+            }
+        });
+
+        // ================================================================
+        // 3. OPSI JAWABAN
         // ================================================================
         const optionItems = document.querySelectorAll('.option-item');
         const optionD = document.getElementById('optionD');
@@ -940,18 +1017,16 @@
             feedback.textContent = '';
             selectedAnswer = null;
             isAnswered = false;
-            checkBtn.disabled = false; // PASTIKAN TOMBOL AKTIF
+            checkBtn.disabled = false;
             checkBtn.textContent = '🔍 Cek Jawaban';
         }
 
         optionItems.forEach(item => {
             item.addEventListener('click', function() {
-                // Jika sudah dijawab, reset dulu
                 if (isAnswered) {
                     resetAllOptions();
                 }
 
-                // Hapus semua status sebelumnya
                 optionItems.forEach(opt => {
                     opt.classList.remove('selected', 'correct', 'wrong', 'disabled', 'd-item');
                     const checkIcon = opt.querySelector('.check-icon');
@@ -960,7 +1035,6 @@
                     if (wrongIcon) wrongIcon.style.display = 'none';
                 });
 
-                // Jika yang diklik adalah OPSI D → langsung muncul silang merah
                 if (this.dataset.answer === 'D') {
                     this.classList.add('d-item');
                     selectedAnswer = 'D';
@@ -972,10 +1046,9 @@
                         'angka timbangan masih &gt; 0.';
                     feedback.className = 'feedback show salah';
                     
-                    checkBtn.disabled = false; // TOMBOL TETAP AKTIF
+                    checkBtn.disabled = false;
                     checkBtn.textContent = '🔄 Reset Jawaban';
                 } else {
-                    // Untuk opsi A, B, C, E → normal (centang biru)
                     this.classList.add('selected');
                     selectedAnswer = this.dataset.answer;
                     
@@ -984,14 +1057,13 @@
                     
                     feedback.classList.remove('show', 'benar', 'salah');
                     feedback.textContent = '';
-                    checkBtn.disabled = false; // TOMBOL TETAP AKTIF
+                    checkBtn.disabled = false;
                     checkBtn.textContent = '🔍 Cek Jawaban';
                 }
             });
         });
 
         checkBtn.addEventListener('click', function() {
-            // Jika tombol dalam mode "Reset Jawaban"
             if (this.textContent === '🔄 Reset Jawaban') {
                 resetAllOptions();
                 this.textContent = '🔍 Cek Jawaban';
@@ -1004,7 +1076,6 @@
                 return;
             }
 
-            // Jika yang dipilih adalah D (seharusnya tidak mungkin karena sudah langsung direset)
             if (selectedAnswer === 'D') {
                 resetAllOptions();
                 return;
@@ -1013,7 +1084,6 @@
             const correctAnswers = correctAnswer.split(',');
             const isCorrect = correctAnswers.includes(selectedAnswer);
 
-            // Tandai semua opsi
             optionItems.forEach(opt => {
                 opt.classList.add('disabled');
                 const checkIcon = opt.querySelector('.check-icon');
@@ -1032,7 +1102,6 @@
                 }
             });
 
-            // Hapus class selected dari opsi yang dipilih (biar gak bentrok)
             optionItems.forEach(opt => {
                 if (opt.dataset.answer === selectedAnswer) {
                     opt.classList.remove('selected');
@@ -1048,12 +1117,12 @@
             }
 
             isAnswered = true;
-            this.disabled = false; // PASTIKAN TOMBOL TETAP AKTIF
+            this.disabled = false;
             this.textContent = '🔄 Reset Jawaban';
         });
 
         // ================================================================
-        // 3. SIMULASI
+        // 4. SIMULASI
         // ================================================================
         const liftCar = document.getElementById('liftCar');
         const scaleDisplay = document.getElementById('scaleDisplay');
@@ -1242,6 +1311,7 @@
         console.log('🔑 Kunci jawaban (BENAR):', correctAnswer);
         console.log('❌ Opsi D adalah SALAH - langsung muncul silang merah saat diklik!');
         console.log('🔄 Tombol Cek Jawaban TETAP AKTIF dan bisa diklik untuk reset!');
+        console.log('🔬 Simulasi disembunyikan secara default - klik tombol untuk menampilkan!');
     </script>
 
 </body>
