@@ -250,35 +250,35 @@
             pointer-events: none;
         }
         .simulasi-toggle {
-            background: rgba(20, 50, 70, 0.7);
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 12px 20px;
-            border-radius: 32px;
-            color: #d4ecff;
-            font-weight: 600;
-            font-size: 0.8rem;
+            background: linear-gradient(145deg, #1d6d94, #0f4a68);
+            border: none;
+            border-radius: 40px;
+            padding: 14px 24px;
+            color: white;
+            font-weight: 700;
+            font-size: 0.9rem;
             letter-spacing: 0.5px;
-            transition: all 0.12s ease;
-            box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3);
             cursor: pointer;
-            text-align: center;
+            transition: all 0.3s ease;
             width: 100%;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 0 #0a2a3a;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            margin-bottom: 12px;
+            gap: 12px;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
         .simulasi-toggle:active {
             transform: translateY(3px);
-            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+            box-shadow: 0 1px 0 #0a2a3a;
         }
         .simulasi-toggle .arrow {
             display: inline-block;
             transition: transform 0.3s ease;
+            font-size: 1.2rem;
         }
         .simulasi-toggle .arrow.open {
             transform: rotate(180deg);
@@ -877,7 +877,7 @@
             <span class="arrow" id="toggleArrow">▼</span>
         </button>
 
-        <!-- SIMULASI -->
+        <!-- SIMULASI - AWALNYA TERSEMBUNYI (class="hidden") -->
         <div class="simulasi-container hidden" id="simulasiContainer">
             <div class="simulasi-title">⚙️ LIFT FISIKA</div>
             <div class="simulasi-sub">Simulasi Gaya &amp; Percepatan</div>
@@ -977,18 +977,23 @@
         const simulasiToggle = document.getElementById('simulasiToggle');
         const toggleLabel = document.getElementById('toggleLabel');
         const toggleArrow = document.getElementById('toggleArrow');
+
+        // Simulasi AWALNYA TERSEMBUNYI (sudah ada class "hidden")
         let isSimulasiVisible = false;
 
         simulasiToggle.addEventListener('click', function() {
-            isSimulasiVisible = !isSimulasiVisible;
             if (isSimulasiVisible) {
-                simulasiContainer.classList.remove('hidden');
-                toggleLabel.textContent = 'Sembunyikan Simulasi Fisika';
-                toggleArrow.classList.add('open');
-            } else {
+                // SEMBUNYIKAN
                 simulasiContainer.classList.add('hidden');
                 toggleLabel.textContent = 'Tampilkan Simulasi Fisika';
                 toggleArrow.classList.remove('open');
+                isSimulasiVisible = false;
+            } else {
+                // TAMPILKAN
+                simulasiContainer.classList.remove('hidden');
+                toggleLabel.textContent = 'Sembunyikan Simulasi Fisika';
+                toggleArrow.classList.add('open');
+                isSimulasiVisible = true;
             }
         });
 
